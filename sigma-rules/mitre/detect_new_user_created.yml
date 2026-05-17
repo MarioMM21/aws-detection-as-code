@@ -1,0 +1,26 @@
+title: New IAM User Created - Potential Persistence
+id: detect-new-user-created-001
+status: stable
+description: Detects creation of new IAM users which may indicate an attacker establishing persistence or a backdoor account in the AWS environment
+author: Mario Myles
+date: 2026/05/16
+tags:
+    - attack.persistence
+    - attack.t1136
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: iam.amazonaws.com
+        eventName: CreateUser
+    condition: selection
+level: high
+falsepositives:
+    - Legitimate new employee onboarding
+    - Authorized service account creation
+fields:
+    - userIdentity.arn
+    - requestParameters.userName
+    - sourceIPAddress
+    - awsRegion

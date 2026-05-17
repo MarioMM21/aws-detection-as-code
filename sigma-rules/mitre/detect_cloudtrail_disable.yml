@@ -1,0 +1,29 @@
+title: CloudTrail Logging Disabled - Defense Evasion
+id: detect-cloudtrail-disable-001
+status: stable
+description: Detects when CloudTrail logging is stopped or deleted - a critical indicator of defense evasion as attackers attempt to blind the audit trail
+author: Mario Myles
+date: 2026/05/16
+tags:
+    - attack.defense_evasion
+    - attack.t1562
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: cloudtrail.amazonaws.com
+        eventName|contains:
+            - StopLogging
+            - DeleteTrail
+            - UpdateTrail
+            - PutEventSelectors
+    condition: selection
+level: critical
+falsepositives:
+    - Authorized CloudTrail configuration changes during maintenance
+fields:
+    - userIdentity.arn
+    - eventName
+    - requestParameters.name
+    - sourceIPAddress

@@ -1,0 +1,32 @@
+title: Suspicious S3 Data Access - Potential Exfiltration
+id: detect-s3-exfil-001
+status: stable
+description: Detects unusual S3 bucket access patterns that may indicate data exfiltration - large volume downloads or access from unexpected principals
+author: Mario Myles
+date: 2026/05/16
+tags:
+    - attack.exfiltration
+    - attack.t1537
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: s3.amazonaws.com
+        eventName|contains:
+            - GetObject
+            - ListBucket
+            - GetBucketAcl
+            - PutBucketPublicAccessBlock
+    filter:
+        userIdentity.type: Service
+    condition: selection and not filter
+level: medium
+falsepositives:
+    - Legitimate bulk data access by authorized users
+    - Backup and analytics workloads
+fields:
+    - userIdentity.arn
+    - eventName
+    - requestParameters.bucketName
+    - sourceIPAddress

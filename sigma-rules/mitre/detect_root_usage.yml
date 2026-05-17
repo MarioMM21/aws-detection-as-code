@@ -1,0 +1,25 @@
+title: Root Account API Call Detected
+id: detect-root-usage-001
+status: stable
+description: Detects when AWS root account credentials are used for any API call - a critical security violation indicating potential account compromise or policy violation
+author: Mario Myles
+date: 2026/05/16
+tags:
+    - attack.privilege_escalation
+    - attack.t1078
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        userIdentity.type: Root
+        eventType: AwsApiCall
+    condition: selection
+level: critical
+falsepositives:
+    - Legitimate root account activity during initial AWS account setup
+fields:
+    - userIdentity.type
+    - eventName
+    - sourceIPAddress
+    - awsRegion

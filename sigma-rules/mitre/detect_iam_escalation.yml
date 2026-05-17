@@ -1,0 +1,35 @@
+title: IAM Policy Modified - Potential Privilege Escalation
+id: detect-iam-escalation-001
+status: stable
+description: Detects modifications to IAM policies that could indicate privilege escalation attempts - attacker may be attempting to gain elevated permissions
+author: Mario Myles
+date: 2026/05/16
+tags:
+    - attack.privilege_escalation
+    - attack.defense_evasion
+    - attack.t1484
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: iam.amazonaws.com
+        eventName|contains:
+            - PutUserPolicy
+            - PutRolePolicy
+            - PutGroupPolicy
+            - AttachUserPolicy
+            - AttachRolePolicy
+            - AttachGroupPolicy
+            - CreatePolicy
+            - CreatePolicyVersion
+    condition: selection
+level: high
+falsepositives:
+    - Legitimate IAM policy changes by authorized administrators
+    - Automated IAM management tools
+fields:
+    - userIdentity.arn
+    - eventName
+    - requestParameters
+    - sourceIPAddress
